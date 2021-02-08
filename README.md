@@ -15,12 +15,12 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][contributors-shield]][contributors-url]
+<a href="https://github.com/MFC-VIT/Events-Portal-Backend/graphs/contributors">![Contributors][contributors-shield]</a>
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
- <a href="https://www.linkedin.com/company/mozilla-firefox-club-vit/mycompany/">[![LinkedIn][linkedin-shield]]</a>
+ <a href="https://www.linkedin.com/company/mozilla-firefox-club-vit/mycompany/">![LinkedIn][linkedin-shield]</a>
 
 
 
