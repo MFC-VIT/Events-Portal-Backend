@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User,Event_Registration
 from django.contrib import auth
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
@@ -111,3 +111,8 @@ class SetNewPasswordSerializer(serializers.Serializer):
         except Exception as e:
             raise AuthenticationFailed('The reset link is invalid', 401)
         return super().validate(attrs)
+
+class EventRegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event_Registration
+        fields = ('event','user')

@@ -50,3 +50,28 @@ class User(AbstractBaseUser, PermissionsMixin):
             'refresh':str(refresh),
             'access':str(refresh.access_token)
         }
+
+class Event(models.Model):
+    name = models.CharField(max_length=255,unique=True)
+    registered_users = models.ManyToManyField(User,through="Event_Registration")
+
+    def __str__(self):
+        return self.name
+
+class Event_Registration(models.Model):
+    event = models.ForeignKey(Event,related_name="event_registration",on_delete=models.CASCADE)
+    user = models.ForeignKey(User,related_name="user_events",on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('event','user')
+
+    def __str__(self):
+        return self.user.username + ' Registered in ' + self.event.name
+
+class Feedback(models.Model):
+    event = models.ForeignKey(Event,related_name="event_feedback",on_delete=models.CASCADE)
+    user = models.ForeignKey(User,related_name="user_event_feedback",on_delete=models.CASCADE)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.event.name + ' By ' +self.user.username

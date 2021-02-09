@@ -7,7 +7,7 @@ from .serializers import (RegisterSerializer,LoginSerializer,
                             LogoutSerializer,
                             EmailVerificationSerializer,
                             ResetPasswordEmailRequestSerializer,
-                            SetNewPasswordSerializer)
+                            SetNewPasswordSerializer,EventRegisterSerializer)
 from rest_framework.generics import ListCreateAPIView
 import random
 from django.shortcuts import render
@@ -133,3 +133,13 @@ class LogoutAPIView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({'success':'User successfully logged out'},status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def EventRegisterAPIView(request):
+    if request.method == 'POST':
+        serializer = EventRegisterSerializer(data=request.data,many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
