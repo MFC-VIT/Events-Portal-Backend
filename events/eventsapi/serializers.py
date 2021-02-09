@@ -115,4 +115,4 @@ class SetNewPasswordSerializer(serializers.Serializer):
 class EventRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event_Registration
-        fields = ('event','user')
+        fields = ['event']

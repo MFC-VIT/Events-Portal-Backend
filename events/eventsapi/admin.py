@@ -36,5 +36,8 @@ class Event_RegistrationAdmin(admin.ModelAdmin,ExportCsvMixin):
     actions = ["export_as_csv"]
 # Register your models here.
 
-admin.site.register(Event)
+@admin.register(Event)
+class EventAdmin(admin.ModelAdmin,ExportCsvMixin):
+    list_display = ['name','id']
+
 admin.site.register(Feedback)
