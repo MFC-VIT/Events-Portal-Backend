@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User
+from .models import User,Event,Feedback,Event_Registration
 from django.utils.html import format_html
 import csv
 from django.http import HttpResponse
@@ -27,4 +27,14 @@ class ExportCsvMixin:
 class UserAdmin(admin.ModelAdmin,ExportCsvMixin):
     list_display = ['username','email','phone_number']
     actions = ["export_as_csv"]
+
+@admin.register(Event_Registration)
+class Event_RegistrationAdmin(admin.ModelAdmin,ExportCsvMixin):
+    list_display = ['user','event']
+    list_filter = ['event']
+    search_fields = ['user__username']
+    actions = ["export_as_csv"]
 # Register your models here.
+
+admin.site.register(Event)
+admin.site.register(Feedback)
