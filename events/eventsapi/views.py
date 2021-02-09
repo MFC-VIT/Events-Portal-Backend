@@ -2,7 +2,7 @@ from rest_framework import viewsets,generics,status,views,permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .models import User
+from .models import User,Event,Event_Registration
 from .serializers import (RegisterSerializer,LoginSerializer,
                             LogoutSerializer,
                             EmailVerificationSerializer,
@@ -138,8 +138,13 @@ class LogoutAPIView(generics.GenericAPIView):
 @permission_classes([IsAuthenticated])
 def EventRegisterAPIView(request):
     if request.method == 'POST':
-        serializer = EventRegisterSerializer(data=request.data,many=True)
+        serializer = EventRegisterSerializer(data=request.data)
+        registered = False
+        event = Event.objects.get(pk = request.data['event'])
+        user = request.user
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            if user not in event.registered_users.all():
+                serializer.save(user = user)
+                return Response({'success':'true','message':'event registered successfully'}, status=status.HTTP_201_CREATED)
+            return Response({'success':'false','message':'user already registered'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
