@@ -7,7 +7,7 @@ from .serializers import (RegisterSerializer,LoginSerializer,
                             LogoutSerializer,
                             EmailVerificationSerializer,
                             ResetPasswordEmailRequestSerializer,
-                            SetNewPasswordSerializer,EventRegisterSerializer)
+                            SetNewPasswordSerializer,EventRegisterSerializer, FeedbackSerializer)
 from rest_framework.generics import ListCreateAPIView
 import random
 from django.shortcuts import render
@@ -148,3 +148,20 @@ def EventRegisterAPIView(request):
                 return Response({'success':'true','message':'event registered successfully'}, status=status.HTTP_201_CREATED)
             return Response({'success':'false','message':'user already registered'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def FeedbackAPIView(request):
+    if request.method == 'POST':
+        serializer = FeedbackSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user = request.user)
+            event = Event.objects.get(pk = request.data['event'])
+            email_body = 'user: ' + request.user.username + '\n' + 'Feedback: ' + request.data['description']
+            email_subject = event.name + ' Feedback by ' + request.user.username
+            data = {'email_body': email_body, 'to_email': 'shubhngupta04@gmail.com',
+                    'email_subject': email_subject}
+
+            Util.send_email(data)
+            return Response({'success':'true','message':'Feedback saved successfully'}, status = status.HTTP_201_CREATED)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
