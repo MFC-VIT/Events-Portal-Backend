@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User,Event_Registration
+from .models import User,Event_Registration, Feedback
 from django.contrib import auth
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
@@ -116,3 +116,8 @@ class EventRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event_Registration
         fields = ['event']
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = ['event','description']
