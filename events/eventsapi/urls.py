@@ -17,5 +17,7 @@ urlpatterns = [
     path('password-reset-complete', views.SetNewPasswordAPIView.as_view(),name='password-reset-complete'),
 
     path('event-register/',views.EventRegisterAPIView,name="event-register"),
-    path('feedback/',views.FeedbackAPIView,name="feedback")
+    path('feedback/',views.FeedbackAPIView,name="feedback"),
+
+    path('email-users',views.SendUserEmails.as_view(),name='email')
 ]

@@ -23,6 +23,10 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
+from .admin import SendEmailForm
+from django.views.generic.edit import FormView
+from django.urls import reverse_lazy
+
 # Create your views here.
 ##########################################################
 
@@ -161,7 +165,23 @@ def FeedbackAPIView(request):
             email_subject = event.name + ' Feedback by ' + request.user.username
             data = {'email_body': email_body, 'to_email': 'shubhngupta04@gmail.com',
                     'email_subject': email_subject}
-
-            Util.send_email(data)
             return Response({'success':'true','message':'Feedback saved successfully'}, status = status.HTTP_201_CREATED)
+            Util.send_email(data)
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class SendUserEmails(FormView):
+    template_name = 'eventsapi/send_email.html'
+    form_class = SendEmailForm
+    success_url = reverse_lazy('admin:eventsapi_user_changelist')
+
+    def form_valid(self, form):
+        users = form.cleaned_data['users']
+        subject = form.cleaned_data['subject']
+        message = form.cleaned_data['message']
+        users_email = [x.email for x in users]
+        data = {'email_body': message,
+                'to_email': users_email,
+                'email_subject': subject}
+        print(data)
+        Util.send_email(data)
+        return super(SendUserEmails, self).form_valid(form)
