@@ -1,0 +1,23 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} delete-confirmation{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label='eventsapi' %}">{% trans "Users" %}</a>
+&rsaquo; <a href="{% url 'admin:eventsapi_user_changelist' %}">{% trans "Users" %}</a>
+&rsaquo; <span>Send email</span>
+</div>
+{% endblock %}
+
+{% block content %}
+<p>{% blocktrans %}Write your message here{% endblocktrans %}</p>
+<form method="POST" action="{% url 'eventsapi:email' %}">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="{% trans 'Send message' %}" />
+    <a href="{% url 'admin:eventsapi_user_changelist' %}" class="button cancel-link">{% trans "No, take me back" %}</a>
+</form>
+{% endblock %}
