@@ -178,7 +178,11 @@ class SendUserEmails(FormView):
         users = form.cleaned_data['users']
         subject = form.cleaned_data['subject']
         message = form.cleaned_data['message']
-        users_email = [x.email for x in users]
+        print(users)
+        users_email = []
+        for x in users:
+            user = User.objects.get(username=x)
+            users_email.append(user.email)
         data = {'email_body': message,
                 'to_email': users_email,
                 'email_subject': subject}
