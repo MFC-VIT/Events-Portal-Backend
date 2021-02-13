@@ -44,9 +44,9 @@ class SendEmailMixin:
     send_email.short_description = "Send Email To Selected"
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin,ExportCsvMixin):
+class UserAdmin(admin.ModelAdmin,ExportCsvMixin,SendEmailMixin):
     list_display = ['username','email','phone_number','id']
-    actions = ["export_as_csv"]
+    actions = ["export_as_csv","send_email"]
 
 @admin.register(Event_Registration)
 class Event_RegistrationAdmin(admin.ModelAdmin,ExportCsvMixin,SendEmailMixin):
@@ -60,4 +60,7 @@ class Event_RegistrationAdmin(admin.ModelAdmin,ExportCsvMixin,SendEmailMixin):
 class EventAdmin(admin.ModelAdmin,ExportCsvMixin):
     list_display = ['name','id']
 
-admin.site.register(Feedback)
+@admin.register(Feedback)
+class FeedbackAdmin(admin.ModelAdmin,ExportCsvMixin):
+    list_display = ['event','user','description']
+    actions = ["export_as_csv"]
