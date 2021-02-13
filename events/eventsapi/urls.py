@@ -16,6 +16,9 @@ urlpatterns = [
     path('password-reset/<uidb64>/<token>/',views.PasswordTokenCheckAPI.as_view(), name='password-reset-confirm'),
     path('password-reset-complete', views.SetNewPasswordAPIView.as_view(),name='password-reset-complete'),
 
+    path('google/', views.GoogleSocialAuthView.as_view()),
+    path('google_login/', views.google_login,name='google-login'),
+
     path('event-register/',views.EventRegisterAPIView,name="event-register"),
     path('feedback/',views.FeedbackAPIView,name="feedback"),
 
