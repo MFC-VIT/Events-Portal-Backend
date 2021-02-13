@@ -24,9 +24,11 @@ class ExportCsvMixin:
 
     export_as_csv.short_description = "Export Selected"
 
-user_list = User.objects.all()
-choices_list = [(x.username,x.email) for x in user_list]
-choices_tuple = tuple(choices_list)
+# user_list = User.objects.all()
+# choices_list = [(x.username,x.email) for x in user_list]
+# choices_tuple = tuple(choices_list)
+
+choices_tuple = ('akshat','test@gmail.com')
 
 class SendEmailForm(forms.Form):
     subject = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Subject'}))

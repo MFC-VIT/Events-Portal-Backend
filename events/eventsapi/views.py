@@ -7,8 +7,9 @@ from .serializers import (RegisterSerializer,LoginSerializer,
                             LogoutSerializer,
                             EmailVerificationSerializer,
                             ResetPasswordEmailRequestSerializer,
+                            GoogleSocialAuthSerializer,
                             SetNewPasswordSerializer,EventRegisterSerializer, FeedbackSerializer)
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView,GenericAPIView
 import random
 from django.shortcuts import render
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -22,7 +23,6 @@ from .renderers import UserRenderer
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-
 from .admin import SendEmailForm
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
@@ -138,6 +138,8 @@ class LogoutAPIView(generics.GenericAPIView):
         serializer.save()
         return Response({'success':'User successfully logged out'},status=status.HTTP_200_OK)
 
+##############################################################################################################
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def EventRegisterAPIView(request):
@@ -188,3 +190,18 @@ class SendUserEmails(FormView):
         print(data)
         Util.send_email(data)
         return super(SendUserEmails, self).form_valid(form)
+
+######################################################################################################################
+
+
+
+class GoogleSocialAuthView(GenericAPIView):
+    serializer_class = GoogleSocialAuthSerializer
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = ((serializer.validated_data)['auth_token'])
+        return Response(data, status=status.HTTP_200_OK)
+
+def google_login(request):
+    return render(request, 'eventsapi/google_login.html', {})
