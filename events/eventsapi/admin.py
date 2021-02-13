@@ -42,11 +42,17 @@ class SendEmailMixin:
                                         'message': 'Please type your message'})
         return render(request, 'eventsapi/send_email.html', {'form': form})
     send_email.short_description = "Send Email To Selected"
+    def send_email_to_user(self, request, queryset):
+        form = SendEmailForm(initial={  'users': [x.username for x in queryset],
+                                        'subject': 'Please type your Subject',
+                                        'message': 'Please type your message'})
+        return render(request, 'eventsapi/send_email.html', {'form': form})
+    send_email_to_user.short_description = "Send Email To Selected"
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin,ExportCsvMixin,SendEmailMixin):
     list_display = ['username','email','phone_number','id']
-    actions = ["export_as_csv","send_email"]
+    actions = ["export_as_csv","send_email_to_user"]
 
 @admin.register(Event_Registration)
 class Event_RegistrationAdmin(admin.ModelAdmin,ExportCsvMixin,SendEmailMixin):
