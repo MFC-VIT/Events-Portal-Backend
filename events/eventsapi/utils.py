@@ -2,7 +2,7 @@ from django.core.mail import EmailMessage
 import os
 import smtplib
 import yagmail
-from .models import User
+from .models import UserAccount
 
 class Util:
     @staticmethod
