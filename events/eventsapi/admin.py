@@ -1,34 +1,32 @@
 from django.contrib import admin
-from .models import User,Event,Feedback,Event_Registration
+from .models import UserAccount,Event,Feedback,Event_Registration
 from django.utils.html import format_html
 import csv
 from django.http import HttpResponse
 from django import forms
 from django.shortcuts import render
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class ExportCsvMixin:
     def export_as_csv(self, request, queryset):
-
         meta = self.model._meta
         field_names = [field.name for field in meta.fields]
-
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
         writer = csv.writer(response)
-
         writer.writerow(field_names)
         for obj in queryset:
             row = writer.writerow([getattr(obj, field) for field in field_names])
-
         return response
-
     export_as_csv.short_description = "Export Selected"
 
-# user_list = User.objects.all()
-# choices_list = [(x.username,x.email) for x in user_list]
-# choices_tuple = tuple(choices_list)
+user_list = User.objects.all()
+choices_list = [(x.id,x.email) for x in user_list]
+choices_tuple = tuple(choices_list)
 
-choices_tuple = ('akshat','test@gmail.com')
+# choices_tuple = ('Akshat Gupta','akshatguptawelcome@gmail.com')
 
 class SendEmailForm(forms.Form):
     subject = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Subject'}))
@@ -39,30 +37,29 @@ class SendEmailForm(forms.Form):
 
 class SendEmailMixin:
     def send_email(self, request, queryset):
-        form = SendEmailForm(initial={  'users': [x.user.username for x in queryset],
+        form = SendEmailForm(initial={  'users': [x.user.id for x in queryset],
                                         'subject': 'Please type your Subject',
                                         'message': 'Please type your message'})
         return render(request, 'eventsapi/send_email.html', {'form': form})
     send_email.short_description = "Send Email To Selected"
     def send_email_to_user(self, request, queryset):
-        form = SendEmailForm(initial={  'users': [x.username for x in queryset],
+        form = SendEmailForm(initial={  'users': [x.id for x in queryset],
                                         'subject': 'Please type your Subject',
                                         'message': 'Please type your message'})
         return render(request, 'eventsapi/send_email.html', {'form': form})
     send_email_to_user.short_description = "Send Email To Selected"
 
-@admin.register(User)
+@admin.register(UserAccount)
 class UserAdmin(admin.ModelAdmin,ExportCsvMixin,SendEmailMixin):
-    list_display = ['username','email','phone_number','id']
+    list_display = ['first_name','last_name','email','id']
     actions = ["export_as_csv","send_email_to_user"]
 
 @admin.register(Event_Registration)
 class Event_RegistrationAdmin(admin.ModelAdmin,ExportCsvMixin,SendEmailMixin):
     list_display = ['user','event']
     list_filter = ['event']
-    search_fields = ['user__username']
+    search_fields = ['user__first_name','user__last_name','user__get_full_name']
     actions = ["export_as_csv","send_email"]
-# Register your models here.
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin,ExportCsvMixin):
