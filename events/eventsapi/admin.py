@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import UserAccount,Event,Feedback,Event_Registration
+from .models import (   UserAccount,Event,
+                        Feedback,Event_Registration,
+                        EventDetails,EventGallery)
 from django.utils.html import format_html
 import csv
 from django.http import HttpResponse
@@ -69,3 +71,25 @@ class EventAdmin(admin.ModelAdmin,ExportCsvMixin):
 class FeedbackAdmin(admin.ModelAdmin,ExportCsvMixin):
     list_display = ['event','user','description']
     actions = ["export_as_csv"]
+
+@admin.register(EventGallery)
+class EventGalleryAdmin(admin.ModelAdmin):
+    list_display = ['event','get_image']
+    list_filter = ['event']
+    search_fields = ['event__name']
+
+    def get_image(self, obj):
+        html = "<img src='" + str(obj.gallery_image) + "' style='height:200px;width:300px' />";
+        return format_html(html)
+    get_image.short_description = 'Gallery'
+
+@admin.register(EventDetails)
+class EventDetailsAdmin(admin.ModelAdmin):
+    list_display = ['event','event_date','get_image']
+    list_filter = ['event']
+    search_fields = ['event__name']
+
+    def get_image(self, obj):
+        html = "<img src='" + str(obj.main_image) + "' style='height:200px;width:300px' />";
+        return format_html(html)
+    get_image.short_description = 'Gallery'
